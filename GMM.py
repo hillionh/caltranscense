@@ -95,15 +95,16 @@ def EM_algorithm(max_iter=100, S=None):
         for k in range(N):
 
             # compute weight of mixture k
-            weights += [sum([proba[i][k] for i in range(len(S))] / N)]
+            weights += [np.matrix(sum([proba[i][k]
+                                       for i in range(len(S))] / N))]
 
             # compute mean of mixture k
-            means += [sum([proba[i][k] * S[i] for i in range(len(S))]
-                          ) / sum([proba[i][k] for i in range(len(S))])]
+            means += [np.matrix(sum([proba[i][k] * S[i] for i in range(len(S))]
+                                    ) / sum([proba[i][k] for i in range(len(S))]))]
 
             # compute variance of mixture k
-            variances += [sum([proba[i][k] * (S[i] - means[-1]) * (S[i] - means[-1]).transpose() for i in range(len(S))]
-                              ) / sum([proba[i][k] for i in range(len(S))])]
+            variances += [np.matrix(sum([proba[i][k] * np.dot((S[i] - means[-1]), (S[i] - means[-1]).transpose()) for i in range(len(S))]
+                                        ) / sum([proba[i][k] for i in range(len(S))]))]
             # unfinished business
 
         # update parameters
