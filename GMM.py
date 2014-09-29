@@ -78,25 +78,36 @@ def EM_algorithm(max_iter=100, S=None):
     converged = False
     while not converged:
 
+        proba = []
+        means = []
+        variances = []
+        weights = []
         for sample in S:
 
-            # compute posterior probabilities
-            post_proba = [model.eval_proba(sample[j])
-                          for j in range(N)]
+            proba += [[]]
 
-            # compute weights
-            weights = sum(post_proba) / N
+            for k in range(N):
 
-            # compute means
-            means = sum([post_proba[j] * sample[j]
-                         for j in range(N)]) / post_proba
+                # compute  probability of having sample s in mixture k
+                proba[-1] += [
+                    model.gaussians[k].eval_proba(sample) / model.eval_proba(sample)]
 
-            # compute variances
-            variances = None
+        for k in range(N):
+
+            # compute weight of mixture k
+            weights += [sum([proba[i][k] for i in range(len(S))] / N)]
+
+            # compute mean of mixture k
+            means += [sum([proba[i][k] * S[i] for i in range(len(S))]
+                          ) / sum([proba[i][k] for i in range(len(S))])]
+
+            # compute variance of mixture k
+            variances += [sum([proba[i][k] * (S[i] - means[-1]) * (S[i] - means[-1]).transpose() for i in range(len(S))]
+                              ) / sum([proba[i][k] for i in range(len(S))])]
             # unfinished business
 
-            # update parameters
-            model.update_parameters(means, variances, weights)
+        # update parameters
+        model.update_parameters(means, variances, weights)
 
         # Convergence check
         counter += 1
