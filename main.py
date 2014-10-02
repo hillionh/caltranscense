@@ -52,7 +52,7 @@ for data_element in data_list:
 
 
 # parameter estimation : EM algorithm
-model = EM_algorithm(S=S, N=len(S), K=len(S[0]))
+model = EM_algorithm(S)
 
 # print parameters and visualize gaussians
 print(model.get_parameters)
